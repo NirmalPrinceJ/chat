@@ -1,26 +1,29 @@
-# Nuxt AI Chatbot Template
+# IntegrateWise AI Chat Gateway
 
 [![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)
 
-Full-featured AI Chatbot Nuxt application with authentication, chat history, collapsible sidebar, keyboard shortcuts, light & dark mode, command palette and more. Built using [Nuxt UI](https://ui.nuxt.com) components and integrated with [AI SDK](https://ai-sdk.dev) for a complete chat experience.
+IntegrateWise is a Nuxt AI chat application that keeps agents decoupled from individual inference providers. It uses the AI SDK for streaming chat, while the product architecture treats Cloudflare AI (Modelflare), Hugging Face, OpenAI, Anthropic, Gemini, and local models as interchangeable execution engines behind an IntegrateWise AI Gateway.
 
-- [Live demo](https://chat-template.nuxt.dev/)
-- [Documentation](https://ui.nuxt.com/docs/getting-started/installation/nuxt)
-
-<a href="https://chat-template.nuxt.dev/" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ui.nuxt.com/assets/templates/nuxt/chat-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://ui.nuxt.com/assets/templates/nuxt/chat-light.png">
-    <img alt="Nuxt AI Chatbot Template" src="https://ui.nuxt.com/assets/templates/nuxt/chat-light.png">
-  </picture>
-</a>
-
-> The chat template for Vue is on https://github.com/nuxt-ui-templates/chat-vue.
+```text
+                IntegrateWise Gateway
+                        │
+        ┌───────────────┼────────────────┐
+        │               │                │
+   Cloudflare AI     Hugging Face     Local Models
+    (Modelflare)      Inference          (optional)
+        │               │
+        └────── OpenAI Compatible ──────┘
+                        │
+                  ADK / MCP / Agents
+                        │
+                 Digital Memory Spine
+```
 
 ## Features
 
 - ⚡️ **Streaming AI messages** powered by the [AI SDK](https://ai-sdk.dev) with thinking/reasoning support
-- 🤖 **Multiple model support** — Claude Haiku 4.5, Gemini 3 Flash and GPT-5 Nano via [Vercel AI Gateway](https://vercel.com/docs/ai-gateway)
+- 🧭 **Gateway-first model access** so agents request capabilities instead of depending on one provider
+- 🔁 **Provider interchangeability** across Cloudflare AI, Hugging Face, OpenAI, Anthropic, Gemini, and local models
 - 🔍 **Web search** with built-in provider tools (Anthropic, OpenAI)
 - 📊 **Charts and weather** tool calling with rich UI rendering
 - 🔐 **Authentication** via GitHub OAuth using [nuxt-auth-utils](https://github.com/atinux/nuxt-auth-utils)
@@ -28,17 +31,98 @@ Full-featured AI Chatbot Nuxt application with authentication, chat history, col
 - 📎 **File uploads** with drag & drop using [NuxtHub Blob](https://hub.nuxt.com/docs/blob) (requires authentication)
 - ✨ **Markdown rendering** with streaming code highlighting via [Comark](https://comark.dev)
 
-## Quick Start
+## IntegrateWise Doctrine
 
-```bash
-npm create nuxt@latest -- -t ui/chat
+The platform should never be coupled to a single model or inference provider.
+
+```text
+Truth
+    │
+Digital Memory Spine
+    │
+AI Gateway
+    │
+Capabilities
+    │
+Providers
+        ├── Cloudflare AI (Modelflare)
+        ├── Hugging Face
+        ├── OpenAI
+        ├── Anthropic
+        ├── Gemini
+        └── Local Models
 ```
 
-## Deploy your own
+> **Truth you own. AI you rent. Approval in between.**
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fchat&repository-name=chat&env=NUXT_OAUTH_GITHUB_CLIENT_ID%2CNUXT_OAUTH_GITHUB_CLIENT_SECRET%2CNUXT_SESSION_PASSWORD&stores=%5B%7B%22type%22%3A%22integration%22%2C%22integrationSlug%22%3A%22tursocloud%22%2C%22productSlug%22%3A%22database%22%2C%22protocol%22%3A%22storage%22%7D%2C%7B%22type%22%3A%22blob%22%7D%5D&demo-title=Nuxt+Chat+Template&demo-description=An+AI+chatbot+template+with+GitHub+authentication+and+persistent+chat+history+powered+by+Vercel+AI+SDK.&demo-url=https%3A%2F%2Fchat-template.nuxt.dev&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Fchat-dark.png)
+The Digital Memory Spine, AI Gateway, ADK, MCP, and governance layer remain permanent architecture. Providers are replaceable execution engines.
 
-## Setup
+## Gateway Policy
+
+Agents must not call inference providers directly. They call the IntegrateWise AI Gateway, and the gateway decides the model, provider, fallback, retry strategy, cost controls, latency profile, governance checks, and logging.
+
+```text
+Agent
+   │
+   ▼
+IntegrateWise AI Gateway
+   │
+   ├── Cloudflare AI
+   ├── Hugging Face
+   ├── OpenAI
+   ├── Anthropic
+   ├── Gemini
+   ├── Local Models
+   └── Future Providers
+```
+
+Agents request capabilities such as:
+
+```text
+reason()
+extract()
+embed()
+rerank()
+summarize()
+vision()
+code()
+```
+
+The gateway maps those capabilities to the best provider for the workload.
+
+## Provider Roles
+
+### Cloudflare AI (Modelflare)
+
+Use Cloudflare AI for low-latency inference, edge-native execution, global deployment, production workloads, small and medium reasoning models, embeddings, classification, extraction, and structured outputs.
+
+It is a good primary provider for entity extraction, schema synthesis, governance checks, routing, AI workers, and background intelligence.
+
+Typical model families include Llama 3.x, Qwen 3, DeepSeek, Mistral, Gemma, embedding models, and rerank models.
+
+### Hugging Face
+
+Use Hugging Face for the latest open models, specialized models, vision, OCR, speech, experimental reasoning, and fine-tuned enterprise models.
+
+It is the long-tail provider whenever Cloudflare AI does not host the model required by a capability.
+
+Example model families include Qwen, DeepSeek, Mistral, Phi, Granite, Gemma, ModernBERT, Jina embeddings, BGE embeddings, and ColBERT rerankers.
+
+## Recommended Capability Mapping
+
+| Capability | Primary | Fallback |
+| --- | --- | --- |
+| Reasoning | Cloudflare AI | Hugging Face |
+| Code | Cloudflare AI | Hugging Face |
+| Embeddings | Cloudflare AI | Hugging Face |
+| Reranking | Cloudflare AI | Hugging Face |
+| Vision | Hugging Face | Cloudflare AI |
+| OCR | Hugging Face | Cloudflare AI |
+| Speech | Hugging Face | Cloudflare AI |
+| Schema AI | Cloudflare AI | Hugging Face |
+| Entity360 Synthesis | Cloudflare AI | Hugging Face |
+
+## Quick Start
 
 Make sure to install the dependencies:
 
@@ -52,21 +136,23 @@ Run database migrations:
 pnpm db:migrate
 ```
 
-> [!NOTE]
-> In production, configure your database connection. On Vercel, add the [Turso integration](https://vercel.com/integrations/turso) to automatically provision `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`.
+Start the development server on `http://localhost:3000`:
+
+```bash
+pnpm dev
+```
+
+## Setup
 
 ### AI Integration
 
-This template uses the [Vercel AI SDK](https://ai-sdk.dev/) for streaming AI responses with support for multiple providers through [Vercel AI Gateway](https://vercel.com/docs/ai-gateway). When deployed on Vercel, the AI Gateway is configured automatically.
+This application uses the [Vercel AI SDK](https://ai-sdk.dev/) for streaming AI responses. The IntegrateWise architecture keeps provider selection behind a gateway boundary so the app can add Cloudflare AI, Hugging Face, OpenAI, Anthropic, Gemini, local models, and future providers without coupling agent code to provider-specific APIs.
 
 For local development, set your API key in `.env`:
 
 ```bash
-AI_GATEWAY_API_KEY=<your-vercel-ai-gateway-api-key>
+AI_GATEWAY_API_KEY=<your-ai-gateway-api-key>
 ```
-
-> [!TIP]
-> With [Vercel AI Gateway](https://vercel.com/docs/ai-gateway), you don't need individual API keys for OpenAI, Anthropic, etc. It provides a unified API to access hundreds of models through a single endpoint with automatic load balancing, fallbacks, and spend monitoring.
 
 ### Authentication (Optional)
 
